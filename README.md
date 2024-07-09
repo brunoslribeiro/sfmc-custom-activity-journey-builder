@@ -2,6 +2,10 @@
 
 This is a simple code for the purpose of studying a customized activity in Marketing Cloud that works with a node.js application, which has the simple function of taking a sample of parameters related to the journey and sending them to an endpoint through configurations made in the config.json.
 
+
+
+![Journey Activity Example](https://github.com/brunoslribeiro/sfmc-custom-activity-journey-builder/blob/main/assets/example2.png)
+
 Requirements
 - You need a Node.JS server.
 - You need an SSL domain otherwise Marketing Cloud rejects calls. 
