@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minha Atividade Customizada</title>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/postmonger.js"></script>
+    <style>
+        .checkbox-label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="step1">
+        <label>Selecione os campos da Data Extension:</label>
+        <div id="checkboxFields">
+            <!-- Checkboxes serão populados dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        var connection = new Postmonger.Session();
+        var payload = {};
+        var valoresSelecionados = []; // Variável para armazenar os campos selecionados anteriormente
+
+        $(window).ready(onRender);
+
+        connection.on('initActivity', initialize);
+        connection.on('clickedNext', onClickedNext);
+
+        function onRender() {
+            connection.trigger('ready');
+        }
+
+        function initialize(data) {
+            $('#step1').show();
+            if (data) {
+                payload = data;
+            }
+
+            try {
+                valoresSelecionados = extractValues(payload['arguments'].execute.inArguments);
+            } catch (error) {
+                console.log('Erro ao extrair valores:', error);
+            }
+
+            connection.trigger('requestSchema');
+            connection.on('requestedSchema', function(data) {
+                const schema = data['schema'];
+
+                // Limpa o div antes de adicionar novas checkboxes
+                $('#checkboxFields').empty();
+
+                console.log(schema);
+
+                schema.forEach(function(field) {
+                    let checkboxId = 'checkbox_' + field.key;
+                    var name = field.name!=null ? field.name : field.key;
+                    let checkboxLabel = $('<label class="checkbox-label"></label>')
+                        .text(name);
+                    let checkboxInput = $('<input type="checkbox">')
+                        .attr('id', checkboxId)
+                        .attr('name', name)
+                        .prop('checked', valueExists(field.key, valoresSelecionados));
+
+                    checkboxLabel.prepend(checkboxInput);
+                    $('#checkboxFields').append(checkboxLabel);
+                });
+            });
+        }
+
+        function onClickedNext() {
+            console.log("Botão Next clicado");
+
+            // Obtém os campos selecionados no momento do clique
+            var selectedFields = [];
+            $('#checkboxFields input:checked').each(function() {
+                var fieldName = $(this).attr('name');
+                var fieldKey = "{{"+ $(this).attr('id').replace('checkbox_', '') + "}}";
+                var fieldObj = {};
+                fieldObj[fieldName] = fieldKey;
+                selectedFields.push(fieldObj);
+            });
+
+            payload['arguments'].execute.inArguments = selectedFields;
+            payload['metaData'].isConfigured = true;
+            connection.trigger('updateActivity', payload);
+        }
+
+        // Função para extrair os valores dos objetos
+        function extractValues(array) {
+            var values = [];
+            array.forEach(function(obj) {
+                var value = Object.values(obj)[0]; // Obtém o valor do primeiro (e único) par chave-valor do objeto
+                values.push(value);
+            });
+            return values;
+        }
+
+        // Função para verificar se um valor existe no array
+        function valueExists(valueToCheck, array) {
+            return array.includes(valueToCheck);
+        }
+
+    </script>
+</body>
+</html>
