@@ -31,6 +31,8 @@ Settings
     - Add a Category "Custom" It can be whatever you think is best.
     - Add URL to your server example https://someexample.herokuapp.com/
 
+- Don't forget to go to "Access" and add permission to your Marketing Cloud user and the BU that you will use the customized activity.    
+
 ### Important points - Copy the items below after settings - Environment variables.
 - PackageId - Your application id will need to be added to the .env file, 
 - JWT Signing Secret - This secret is used to decrypt the JWT token.
