@@ -47,3 +47,5 @@ Bruno Smith Lopes Ribeiro - Salesforce Architecture Lead - bruno_smith10@hotmail
 
 ### Sources
 https://www.cloudkettle.com/blog/using-entry-source-data-in-journey-builder-custom-activities
+
+#salesforce #sfmc #custom-activity #journey-builder #marketingcloud #nodejs
